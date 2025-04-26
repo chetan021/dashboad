@@ -4,8 +4,19 @@ import postgres from 'postgres';
 import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+// 
+async function testConnection() {
+  try {
+    const result = await sql`SELECT NOW()`;
+    console.log('Connected! Time:', result[0].now);
+  } catch (err) {
+    console.error('Connection error:', err);
+  }
+}
 
+testConnection();
 async function seedUsers() {
+  console.log(process.env.POSTGRES_URL)
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await sql`
     CREATE TABLE IF NOT EXISTS users (
@@ -113,6 +124,7 @@ export async function GET() {
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
+    console.log("eror occured")
     return Response.json({ error }, { status: 500 });
   }
 }
